@@ -1,12 +1,11 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { Tabs } from "expo-router";
+import { Platform } from "react-native";
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import { HapticTab } from "@/components/HapticTab";
+import { IconSymbol } from "@/components/ui/IconSymbol";
+import TabBarBackground from "@/components/ui/TabBarBackground";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -14,26 +13,27 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: false,
         tabBarButton: HapticTab,
         tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
-            position: 'absolute',
+            position: "absolute",
           },
           default: {},
         }),
-      }}>
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Minhas Tarefas',
+          title: "Minhas Tarefas",
           tabBarIcon: ({ color, focused }) => (
-            <IconSymbol 
-              size={focused ? 30 : 26} 
-              name={focused ? "checklist" : "list.bullet"} 
-              color={color} 
+            <IconSymbol
+              size={focused ? 30 : 26}
+              name={focused ? "checklist" : "list.bullet"}
+              color={color}
             />
           ),
         }}
@@ -41,12 +41,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Nova Tarefa',
+          title: "Nova Tarefa",
           tabBarIcon: ({ color, focused }) => (
-            <IconSymbol 
-              size={focused ? 32 : 28} 
-              name={focused ? "plus.circle.fill" : "plus.circle"} 
-              color={color} 
+            <IconSymbol
+              size={focused ? 32 : 28}
+              name={focused ? "plus.circle.fill" : "plus.circle"}
+              color={color}
             />
           ),
         }}
@@ -54,12 +54,12 @@ export default function TabLayout() {
       <Tabs.Screen
         name="about"
         options={{
-          title: 'Sobre',
+          title: "Sobre",
           tabBarIcon: ({ color, focused }) => (
-            <IconSymbol 
-              size={focused ? 28 : 24} 
-              name={focused ? "info.circle.fill" : "info.circle"} 
-              color={color} 
+            <IconSymbol
+              size={focused ? 28 : 24}
+              name={focused ? "info.circle.fill" : "info.circle"}
+              color={color}
             />
           ),
         }}
