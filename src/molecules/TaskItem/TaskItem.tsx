@@ -1,9 +1,11 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
-import { Icon, PriorityIndicator } from '@/src/atoms';
-import { Task } from '@/src/types';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { Icon, PriorityIndicator } from "@/src/atoms";
+import { Task } from "@/src/types";
+import React from "react";
+import { StyleSheet, TouchableOpacity } from "react-native";
 
 export interface TaskItemProps {
   task: Task;
@@ -18,9 +20,24 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onToggleComplete,
   onDelete,
 }) => {
+  const colorScheme = useColorScheme() ?? "light";
+  const colors = Colors[colorScheme];
+
   return (
     <TouchableOpacity
-      style={[styles.container, task.completed && styles.completedContainer]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: colors.cardBackground,
+          borderColor: colors.border,
+        },
+        task.completed && [
+          styles.completedContainer,
+          {
+            backgroundColor: colors.surface,
+          },
+        ],
+      ]}
       onPress={() => onPress?.(task)}
     >
       <ThemedView style={styles.content}>
@@ -29,7 +46,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             <ThemedText
               style={[
                 styles.title,
-                task.completed && styles.completedText,
+                task.completed && [
+                  styles.completedText,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ],
               ]}
               numberOfLines={1}
             >
@@ -37,12 +59,18 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             </ThemedText>
             <PriorityIndicator priority={task.priority} />
           </ThemedView>
-          
-          {task.description && (
+
+          {!!task.description && (
             <ThemedText
               style={[
                 styles.description,
-                task.completed && styles.completedText,
+                { color: colors.textSecondary },
+                task.completed && [
+                  styles.completedText,
+                  {
+                    color: colors.textSecondary,
+                  },
+                ],
               ]}
               numberOfLines={2}
             >
@@ -57,9 +85,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             onPress={() => onToggleComplete?.(task.id)}
           >
             <Icon
-              name={task.completed ? 'checkmark.circle.fill' : 'circle'}
+              name={task.completed ? "checkmark.circle.fill" : "circle"}
               size={24}
-              color={task.completed ? '#4CAF50' : '#666'}
+              color={task.completed ? colors.success : colors.textSecondary}
             />
           </TouchableOpacity>
 
@@ -67,7 +95,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             style={styles.actionButton}
             onPress={() => onDelete?.(task.id)}
           >
-            <Icon name="trash" size={20} color="#FF6B6B" />
+            <Icon name="trash" size={20} color={colors.danger} />
           </TouchableOpacity>
         </ThemedView>
       </ThemedView>
@@ -79,18 +107,15 @@ const styles = StyleSheet.create({
   container: {
     marginBottom: 12,
     borderRadius: 12,
-    backgroundColor: '#f8f9fa',
     borderWidth: 1,
-    borderColor: '#e9ecef',
   },
   completedContainer: {
     opacity: 0.7,
-    backgroundColor: '#f0f0f0',
   },
   content: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
     padding: 16,
   },
   mainContent: {
@@ -98,28 +123,26 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 4,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     flex: 1,
     marginRight: 8,
   },
   description: {
     fontSize: 14,
-    color: '#666',
     lineHeight: 20,
   },
   completedText: {
-    textDecorationLine: 'line-through',
-    color: '#999',
+    textDecorationLine: "line-through",
   },
   actions: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   actionButton: {
     padding: 8,

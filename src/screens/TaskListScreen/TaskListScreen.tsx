@@ -1,12 +1,11 @@
-import { Button } from "@/src/atoms";
 import { useAuth, useTaskContext } from "@/src/hooks";
 import { TaskList } from "@/src/organisms";
 import { PageTemplate } from "@/src/templates";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import { useCallback } from "react";
+import { StyleSheet, View } from "react-native";
 
-export const TaskListScreen: React.FC = () => {
+export const TaskListScreen = () => {
   const {
     tasks,
     refreshing,
@@ -15,7 +14,7 @@ export const TaskListScreen: React.FC = () => {
     onRefresh,
     getTaskStats,
   } = useTaskContext();
-  const { logout, user } = useAuth();
+  const { user } = useAuth();
 
   // Atualizar quando a tela ganha foco
   useFocusEffect(
@@ -23,13 +22,6 @@ export const TaskListScreen: React.FC = () => {
       // Força uma pequena atualização para garantir sincronização
     }, [])
   );
-
-  const handleLogout = () => {
-    Alert.alert("Sair", "Tem certeza que deseja sair?", [
-      { text: "Cancelar", style: "cancel" },
-      { text: "Sair", onPress: () => void logout(), style: "destructive" },
-    ]);
-  };
 
   const stats = getTaskStats();
 
@@ -46,15 +38,6 @@ export const TaskListScreen: React.FC = () => {
           onToggleComplete={toggleTaskCompletion}
           onDeleteTask={deleteTask}
         />
-
-        <View style={styles.logoutContainer}>
-          <Button
-            title="Sair"
-            variant="outline"
-            onPress={handleLogout}
-            style={styles.logoutButton}
-          />
-        </View>
       </View>
     </PageTemplate>
   );
@@ -63,13 +46,5 @@ export const TaskListScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  logoutContainer: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  logoutButton: {
-    backgroundColor: "transparent",
-    borderColor: "#FF6B6B",
   },
 });

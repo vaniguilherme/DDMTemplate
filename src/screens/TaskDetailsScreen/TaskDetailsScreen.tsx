@@ -1,29 +1,39 @@
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { Button } from '@/src/atoms/Button';
-import { Icon } from '@/src/atoms/Icon';
-import { Input } from '@/src/atoms/Input';
-import { PriorityIndicator } from '@/src/atoms/PriorityIndicator';
-import { useTaskContext } from '@/src/hooks';
-import { PrioritySelector } from '@/src/molecules/PrioritySelector';
-import { Task, TaskPriority } from '@/src/types';
-import { router, useLocalSearchParams } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { useThemeColors } from "@/hooks/useThemeColors";
+import { Button } from "@/src/atoms/Button";
+import { Icon } from "@/src/atoms/Icon";
+import { Input } from "@/src/atoms/Input";
+import { PriorityIndicator } from "@/src/atoms/PriorityIndicator";
+import { useTaskContext } from "@/src/hooks";
+import { PrioritySelector } from "@/src/molecules/PrioritySelector";
+import { Task, TaskPriority } from "@/src/types";
+import { router, useLocalSearchParams } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 
 export const TaskDetailsScreen: React.FC = () => {
   const { id } = useLocalSearchParams();
-  const { getTaskById, updateTask, toggleTaskCompletion, deleteTask } = useTaskContext();
-  
+  const { getTaskById, updateTask, toggleTaskCompletion, deleteTask } =
+    useTaskContext();
+  const colors = useThemeColors();
+
   const [task, setTask] = useState<Task | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<TaskPriority>('média');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState<TaskPriority>("média");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (id && typeof id === 'string') {
+    if (id && typeof id === "string") {
       const foundTask = getTaskById(id);
       if (foundTask) {
         setTask(foundTask);
@@ -31,7 +41,7 @@ export const TaskDetailsScreen: React.FC = () => {
         setDescription(foundTask.description);
         setPriority(foundTask.priority);
       } else {
-        Alert.alert('Erro', 'Tarefa não encontrada!');
+        Alert.alert("Erro", "Tarefa não encontrada!");
         router.back();
       }
     }
@@ -39,7 +49,7 @@ export const TaskDetailsScreen: React.FC = () => {
 
   const handleSaveChanges = async () => {
     if (!title.trim()) {
-      Alert.alert('Erro', 'O título da tarefa é obrigatório!');
+      Alert.alert("Erro", "O título da tarefa é obrigatório!");
       return;
     }
 
@@ -54,13 +64,18 @@ export const TaskDetailsScreen: React.FC = () => {
       });
 
       // Atualizar estado local
-      const updatedTask = { ...task, title: title.trim(), description: description.trim(), priority };
+      const updatedTask = {
+        ...task,
+        title: title.trim(),
+        description: description.trim(),
+        priority,
+      };
       setTask(updatedTask);
       setIsEditing(false);
-      Alert.alert('Sucesso!', 'Tarefa atualizada com sucesso!');
+      Alert.alert("Sucesso!", "Tarefa atualizada com sucesso!");
     } catch (error) {
-      console.error('Erro ao salvar alterações:', error);
-      Alert.alert('Erro', 'Não foi possível salvar as alterações.');
+      console.error("Erro ao salvar alterações:", error);
+      Alert.alert("Erro", "Não foi possível salvar as alterações.");
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +88,7 @@ export const TaskDetailsScreen: React.FC = () => {
       await toggleTaskCompletion(task.id);
       setTask({ ...task, completed: !task.completed });
     } catch (error) {
-      console.error('Erro ao atualizar status:', error);
+      console.error("Erro ao atualizar status:", error);
     }
   };
 
@@ -81,20 +96,20 @@ export const TaskDetailsScreen: React.FC = () => {
     if (!task) return;
 
     Alert.alert(
-      'Deletar Tarefa',
-      'Tem certeza que deseja deletar esta tarefa? Esta ação não pode ser desfeita.',
+      "Deletar Tarefa",
+      "Tem certeza que deseja deletar esta tarefa? Esta ação não pode ser desfeita.",
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: 'Deletar',
-          style: 'destructive',
+          text: "Deletar",
+          style: "destructive",
           onPress: async () => {
             try {
               await deleteTask(task.id);
               router.back();
             } catch (error) {
-              console.error('Erro ao deletar tarefa:', error);
-              Alert.alert('Erro', 'Não foi possível deletar a tarefa.');
+              console.error("Erro ao deletar tarefa:", error);
+              Alert.alert("Erro", "Não foi possível deletar a tarefa.");
             }
           },
         },
@@ -113,12 +128,12 @@ export const TaskDetailsScreen: React.FC = () => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return date.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -131,37 +146,37 @@ export const TaskDetailsScreen: React.FC = () => {
   }
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <KeyboardAvoidingView
+      style={[styles.container, { backgroundColor: colors.background }]}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       {/* Header */}
-      <ThemedView style={styles.header}>
+      <ThemedView style={[styles.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => router.back()}
         >
-          <Icon name="chevron.left" size={24} color="#333" />
+          <Icon name="chevron.left" size={24} color={colors.text} />
         </TouchableOpacity>
-        
+
         <ThemedText type="title" style={styles.headerTitle}>
-          {isEditing ? 'Editar Tarefa' : 'Detalhes'}
+          {isEditing ? "Editar Tarefa" : "Detalhes"}
         </ThemedText>
-        
+
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => setIsEditing(!isEditing)}
         >
-          <Icon 
-            name={isEditing ? "xmark" : "pencil"} 
-            size={20} 
-            color={isEditing ? "#FF6B6B" : "#333"} 
+          <Icon
+            name={isEditing ? "xmark" : "pencil"}
+            size={20}
+            color={isEditing ? colors.danger : colors.text}
           />
         </TouchableOpacity>
       </ThemedView>
 
-      <ScrollView 
-        style={styles.content} 
+      <ScrollView
+        style={styles.content}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -171,20 +186,29 @@ export const TaskDetailsScreen: React.FC = () => {
           <TouchableOpacity
             style={[
               styles.statusButton,
-              task.completed && styles.completedStatusButton
+              { backgroundColor: colors.surface },
+              task.completed && [
+                styles.completedStatusButton,
+                { backgroundColor: colors.success + "20" },
+              ],
             ]}
             onPress={handleToggleCompletion}
           >
             <Icon
-              name={task.completed ? 'checkmark.circle.fill' : 'circle'}
+              name={task.completed ? "checkmark.circle.fill" : "circle"}
               size={24}
-              color={task.completed ? '#4CAF50' : '#666'}
+              color={task.completed ? colors.success : colors.textSecondary}
             />
-            <ThemedText style={[
-              styles.statusText,
-              task.completed && styles.completedStatusText
-            ]}>
-              {task.completed ? 'Concluída' : 'Pendente'}
+            <ThemedText
+              style={[
+                styles.statusText,
+                {
+                  color: task.completed ? colors.success : colors.textSecondary,
+                },
+                task.completed && styles.completedStatusText,
+              ]}
+            >
+              {task.completed ? "Concluída" : "Pendente"}
             </ThemedText>
           </TouchableOpacity>
         </ThemedView>
@@ -220,38 +244,67 @@ export const TaskDetailsScreen: React.FC = () => {
           ) : (
             <>
               <ThemedView style={styles.section}>
-                <ThemedText style={styles.sectionLabel}>Título</ThemedText>
-                <ThemedText style={[
-                  styles.taskTitle,
-                  task.completed && styles.completedText
-                ]}>
+                <ThemedText
+                  style={[styles.sectionLabel, { color: colors.textSecondary }]}
+                >
+                  Título
+                </ThemedText>
+                <ThemedText
+                  style={[
+                    styles.taskTitle,
+                    task.completed && [
+                      styles.completedText,
+                      { color: colors.placeholder },
+                    ],
+                  ]}
+                >
                   {task.title}
                 </ThemedText>
               </ThemedView>
 
               <ThemedView style={styles.section}>
-                <ThemedText style={styles.sectionLabel}>Descrição</ThemedText>
-                <ThemedText style={[
-                  styles.taskDescription,
-                  task.completed && styles.completedText
-                ]}>
-                  {task.description || 'Sem descrição'}
+                <ThemedText
+                  style={[styles.sectionLabel, { color: colors.textSecondary }]}
+                >
+                  Descrição
+                </ThemedText>
+                <ThemedText
+                  style={[
+                    styles.taskDescription,
+                    task.completed && [
+                      styles.completedText,
+                      { color: colors.placeholder },
+                    ],
+                  ]}
+                >
+                  {task.description || "Sem descrição"}
                 </ThemedText>
               </ThemedView>
 
               <ThemedView style={styles.section}>
-                <ThemedText style={styles.sectionLabel}>Prioridade</ThemedText>
+                <ThemedText
+                  style={[styles.sectionLabel, { color: colors.textSecondary }]}
+                >
+                  Prioridade
+                </ThemedText>
                 <ThemedView style={styles.priorityDisplay}>
                   <PriorityIndicator priority={task.priority} />
                   <ThemedText style={styles.priorityText}>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    {task.priority.charAt(0).toUpperCase() +
+                      task.priority.slice(1)}
                   </ThemedText>
                 </ThemedView>
               </ThemedView>
 
               <ThemedView style={styles.section}>
-                <ThemedText style={styles.sectionLabel}>Criada em</ThemedText>
-                <ThemedText style={styles.dateText}>
+                <ThemedText
+                  style={[styles.sectionLabel, { color: colors.textSecondary }]}
+                >
+                  Criada em
+                </ThemedText>
+                <ThemedText
+                  style={[styles.dateText, { color: colors.textSecondary }]}
+                >
                   {formatDate(task.createdAt)}
                 </ThemedText>
               </ThemedView>
@@ -261,7 +314,9 @@ export const TaskDetailsScreen: React.FC = () => {
       </ScrollView>
 
       {/* Botões de Ação */}
-      <ThemedView style={styles.actionButtons}>
+      <ThemedView
+        style={[styles.actionButtons, { borderTopColor: colors.border }]}
+      >
         {isEditing ? (
           <>
             <ThemedView style={styles.cancelButtonContainer}>
@@ -272,10 +327,10 @@ export const TaskDetailsScreen: React.FC = () => {
                 fullWidth
               />
             </ThemedView>
-            
+
             <ThemedView style={styles.saveButtonContainer}>
               <Button
-                title={isLoading ? 'Salvando...' : 'Salvar'}
+                title={isLoading ? "Salvando..." : "Salvar"}
                 variant="primary"
                 onPress={handleSaveChanges}
                 disabled={!title.trim() || isLoading}
@@ -299,22 +354,20 @@ export const TaskDetailsScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingHorizontal: 20,
     paddingTop: 60,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
   },
   headerButton: {
     padding: 8,
@@ -322,7 +375,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     flex: 1,
-    textAlign: 'center',
+    textAlign: "center",
     marginHorizontal: 16,
   },
   content: {
@@ -332,27 +385,25 @@ const styles = StyleSheet.create({
   },
   statusContainer: {
     paddingVertical: 20,
-    alignItems: 'center',
+    alignItems: "center",
   },
   statusButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 25,
-    backgroundColor: '#f0f0f0',
   },
   completedStatusButton: {
-    backgroundColor: '#e8f5e8',
+    // This will be overridden by inline styles with theme colors
   },
   statusText: {
     marginLeft: 8,
     fontSize: 16,
-    fontWeight: '600',
-    color: '#666',
+    fontWeight: "600",
   },
   completedStatusText: {
-    color: '#4CAF50',
+    // This will use theme colors
   },
   taskContent: {
     paddingBottom: 20,
@@ -362,59 +413,51 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontSize: 14,
-    fontWeight: '600',
-    color: '#666',
+    fontWeight: "600",
     marginBottom: 8,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
     letterSpacing: 0.5,
   },
   taskTitle: {
     fontSize: 24,
-    fontWeight: '700',
-    color: '#333',
+    fontWeight: "700",
     lineHeight: 32,
   },
   taskDescription: {
     fontSize: 16,
-    color: '#666',
     lineHeight: 24,
   },
   completedText: {
-    textDecorationLine: 'line-through',
-    color: '#999',
+    textDecorationLine: "line-through",
   },
   priorityDisplay: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   priorityText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
+    fontWeight: "500",
     marginLeft: 8,
   },
   dateText: {
     fontSize: 16,
-    color: '#666',
   },
   actionButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 20,
     paddingBottom: 40,
-    backgroundColor: '#ffffff',
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
   },
   cancelButtonContainer: {
-    width: '40%',
+    width: "40%",
     marginRight: 6,
   },
   saveButtonContainer: {
-    width: '56%',
+    width: "56%",
     marginLeft: 6,
   },
   scrollContent: {

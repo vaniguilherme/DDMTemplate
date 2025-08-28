@@ -20,9 +20,19 @@ export default function TabLayout() {
         tabBarStyle: Platform.select({
           ios: {
             position: "absolute",
+            height: 85,
           },
-          default: {},
+          default: {
+            height: 70,
+          },
         }),
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "600",
+        },
+        tabBarIconStyle: {
+          marginTop: 4,
+        },
       }}
     >
       <Tabs.Screen
@@ -31,7 +41,7 @@ export default function TabLayout() {
           title: "Minhas Tarefas",
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol
-              size={focused ? 30 : 26}
+              size={focused ? 34 : 30}
               name={focused ? "checklist" : "list.bullet"}
               color={color}
             />
@@ -44,7 +54,7 @@ export default function TabLayout() {
           title: "Nova Tarefa",
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol
-              size={focused ? 32 : 28}
+              size={focused ? 36 : 32}
               name={focused ? "plus.circle.fill" : "plus.circle"}
               color={color}
             />
@@ -57,8 +67,21 @@ export default function TabLayout() {
           title: "Sobre",
           tabBarIcon: ({ color, focused }) => (
             <IconSymbol
-              size={focused ? 28 : 24}
+              size={focused ? 32 : 28}
               name={focused ? "info.circle.fill" : "info.circle"}
+              color={color}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Sair",
+          tabBarIcon: ({ color, focused }) => (
+            <IconSymbol
+              size={focused ? 32 : 28}
+              name={focused ? "arrow.right.square.fill" : "arrow.right.square"}
               color={color}
             />
           ),

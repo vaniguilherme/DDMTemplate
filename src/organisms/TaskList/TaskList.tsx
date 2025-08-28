@@ -1,8 +1,10 @@
-import React from 'react';
-import { FlatList, Alert, RefreshControl, StyleSheet } from 'react-native';
-import { router } from 'expo-router';
-import { TaskItem, EmptyState } from '@/src/molecules';
-import { Task } from '@/src/types';
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import { EmptyState, TaskItem } from "@/src/molecules";
+import { Task } from "@/src/types";
+import { router } from "expo-router";
+import React from "react";
+import { Alert, FlatList, RefreshControl, StyleSheet } from "react-native";
 
 export interface TaskListProps {
   tasks: Task[];
@@ -19,19 +21,22 @@ export const TaskList: React.FC<TaskListProps> = ({
   onToggleComplete,
   onDeleteTask,
 }) => {
+  const colorScheme = useColorScheme() ?? "light";
+  const colors = Colors[colorScheme];
+
   const handleTaskPress = (task: Task) => {
     router.push(`/task-details?id=${task.id}`);
   };
 
   const handleDeleteTask = (taskId: string) => {
     Alert.alert(
-      'Deletar Tarefa',
-      'Tem certeza que deseja deletar esta tarefa?',
+      "Deletar Tarefa",
+      "Tem certeza que deseja deletar esta tarefa?",
       [
-        { text: 'Cancelar', style: 'cancel' },
+        { text: "Cancelar", style: "cancel" },
         {
-          text: 'Deletar',
-          style: 'destructive',
+          text: "Deletar",
+          style: "destructive",
           onPress: () => onDeleteTask?.(taskId),
         },
       ]
@@ -66,6 +71,8 @@ export const TaskList: React.FC<TaskListProps> = ({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
+          tintColor={colors.primary}
+          colors={[colors.primary]}
         />
       }
     />

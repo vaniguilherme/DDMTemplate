@@ -1,4 +1,6 @@
 import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import React from "react";
 import {
   StyleSheet,
@@ -22,20 +24,83 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
+  const colorScheme = useColorScheme() ?? "light";
+  const colors = Colors[colorScheme];
+
+  const getButtonStyle = () => {
+    const sizeStyle =
+      size === "small"
+        ? styles.small
+        : size === "large"
+        ? styles.large
+        : styles.medium;
+
+    const baseStyle = [styles.button, sizeStyle, fullWidth && styles.fullWidth];
+
+    if (disabled) {
+      return [
+        ...baseStyle,
+        { backgroundColor: colors.secondary, opacity: 0.6 },
+      ];
+    }
+
+    switch (variant) {
+      case "primary":
+        return [...baseStyle, { backgroundColor: colors.primary }];
+      case "secondary":
+        return [
+          ...baseStyle,
+          {
+            backgroundColor: "transparent",
+            borderWidth: 2,
+            borderColor: colors.secondary,
+          },
+        ];
+      case "danger":
+        return [...baseStyle, { backgroundColor: colors.danger }];
+      case "outline":
+        return [
+          ...baseStyle,
+          {
+            backgroundColor: "transparent",
+            borderWidth: 2,
+            borderColor: colors.primary,
+          },
+        ];
+      default:
+        return [...baseStyle, { backgroundColor: colors.primary }];
+    }
+  };
+
+  const getTextColor = () => {
+    if (disabled) {
+      return colors.textSecondary;
+    }
+
+    switch (variant) {
+      case "primary":
+      case "danger":
+        return "#ffffff";
+      case "secondary":
+        return colors.textSecondary;
+      case "outline":
+        return colors.primary;
+      default:
+        return "#ffffff";
+    }
+  };
+
   return (
     <TouchableOpacity
-      style={[
-        styles.button,
-        styles[variant],
-        styles[size],
-        fullWidth && styles.fullWidth,
-        disabled && styles.disabled,
-        style,
-      ]}
+      style={[getButtonStyle(), style]}
       disabled={disabled}
       {...props}
     >
-      <ThemedText style={[styles.text, styles[`${variant}Text`]]}>
+      <ThemedText
+        style={[styles.text, { color: getTextColor() }]}
+        lightColor={getTextColor()}
+        darkColor={getTextColor()}
+      >
         {title}
       </ThemedText>
     </TouchableOpacity>
@@ -47,23 +112,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
-  },
-  // Variants
-  primary: {
-    backgroundColor: "#4CAF50",
-  },
-  secondary: {
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: "#e0e0e0",
-  },
-  danger: {
-    backgroundColor: "#FF6B6B",
-  },
-  outline: {
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: "#4CAF50",
   },
   // Sizes
   small: {
@@ -82,25 +130,9 @@ const styles = StyleSheet.create({
   fullWidth: {
     width: "100%",
   },
-  disabled: {
-    backgroundColor: "#ccc",
-    opacity: 0.6,
-  },
   // Text styles
   text: {
     fontSize: 16,
     fontWeight: "600",
-  },
-  primaryText: {
-    color: "#ffffff",
-  },
-  secondaryText: {
-    color: "#666",
-  },
-  dangerText: {
-    color: "#ffffff",
-  },
-  outlineText: {
-    color: "#4CAF50",
   },
 });

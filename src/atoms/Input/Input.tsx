@@ -1,7 +1,9 @@
-import React from 'react';
-import { StyleSheet, TextInput, TextInputProps } from 'react-native';
-import { ThemedView } from '@/components/ThemedView';
-import { ThemedText } from '@/components/ThemedText';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import React from "react";
+import { StyleSheet, TextInput, TextInputProps } from "react-native";
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -21,34 +23,45 @@ export const Input: React.FC<InputProps> = ({
   value,
   ...props
 }) => {
+  const colorScheme = useColorScheme() ?? "light";
+  const colors = Colors[colorScheme];
+
   return (
     <ThemedView style={styles.container}>
       {label && (
-        <ThemedText style={styles.label}>{label}</ThemedText>
+        <ThemedText style={[styles.label, { color: colors.text }]}>
+          {label}
+        </ThemedText>
       )}
-      
+
       <TextInput
         style={[
           styles.input,
+          {
+            borderColor: error ? colors.danger : colors.border,
+            backgroundColor: colors.surface,
+            color: colors.text,
+          },
           multiline && styles.multilineInput,
-          error && styles.inputError,
           style,
         ]}
         value={value}
         maxLength={maxLength}
         multiline={multiline}
-        textAlignVertical={multiline ? 'top' : 'center'}
-        placeholderTextColor="#999"
+        textAlignVertical={multiline ? "top" : "center"}
+        placeholderTextColor={colors.placeholder}
         {...props}
       />
-      
+
       <ThemedView style={styles.footer}>
         {error && (
-          <ThemedText style={styles.error}>{error}</ThemedText>
+          <ThemedText style={[styles.error, { color: colors.danger }]}>
+            {error}
+          </ThemedText>
         )}
         {showCharCount && maxLength && (
-          <ThemedText style={styles.charCount}>
-            {(value?.length || 0)}/{maxLength}
+          <ThemedText style={[styles.charCount, { color: colors.placeholder }]}>
+            {value?.length || 0}/{maxLength}
           </ThemedText>
         )}
       </ThemedView>
@@ -62,38 +75,30 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 8,
-    color: '#333',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#e0e0e0',
     borderRadius: 12,
     padding: 16,
     fontSize: 16,
-    backgroundColor: '#fafafa',
     minHeight: 48,
   },
   multilineInput: {
     height: 100,
-    textAlignVertical: 'top',
-  },
-  inputError: {
-    borderColor: '#FF6B6B',
+    textAlignVertical: "top",
   },
   footer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginTop: 4,
   },
   error: {
     fontSize: 12,
-    color: '#FF6B6B',
   },
   charCount: {
     fontSize: 12,
-    color: '#999',
   },
 });

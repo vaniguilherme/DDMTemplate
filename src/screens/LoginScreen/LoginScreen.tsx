@@ -1,4 +1,7 @@
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
 import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
 import { Button, Input } from "@/src/atoms";
 import { useAuth } from "@/src/hooks";
 import { useState } from "react";
@@ -9,7 +12,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  View,
 } from "react-native";
 
 export function LoginScreen() {
@@ -17,6 +19,8 @@ export function LoginScreen() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const colorScheme = useColorScheme() ?? "light";
+  const colors = Colors[colorScheme];
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -48,22 +52,24 @@ export function LoginScreen() {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
-        <View style={styles.logoContainer}>
+        <ThemedView style={styles.logoContainer}>
           <Text style={styles.logo}>📋</Text>
-          <Text style={styles.title}>DDM Template</Text>
-          <Text style={styles.subtitle}>
+          <ThemedText style={styles.title}>DDM Template</ThemedText>
+          <ThemedText
+            style={[styles.subtitle, { color: colors.textSecondary }]}
+          >
             Sistema de Gerenciamento de Tarefas
-          </Text>
-        </View>
+          </ThemedText>
+        </ThemedView>
 
-        <View style={styles.formContainer}>
+        <ThemedView style={styles.formContainer}>
           <Input
             label="Email"
             value={email}
@@ -97,14 +103,30 @@ export function LoginScreen() {
             style={styles.demoButton}
           />
 
-          <View style={styles.credentialsInfo}>
-            <Text style={styles.credentialsTitle}>
+          <ThemedView
+            style={[
+              styles.credentialsInfo,
+              {
+                backgroundColor: colors.surface,
+                borderColor: colors.border,
+              },
+            ]}
+          >
+            <ThemedText style={styles.credentialsTitle}>
               Credenciais de Demonstração:
-            </Text>
-            <Text style={styles.credentialsText}>Email: admin@ddm.com</Text>
-            <Text style={styles.credentialsText}>Senha: 123456</Text>
-          </View>
-        </View>
+            </ThemedText>
+            <ThemedText
+              style={[styles.credentialsText, { color: colors.textSecondary }]}
+            >
+              Email: admin@ddm.com
+            </ThemedText>
+            <ThemedText
+              style={[styles.credentialsText, { color: colors.textSecondary }]}
+            >
+              Senha: 123456
+            </ThemedText>
+          </ThemedView>
+        </ThemedView>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -113,7 +135,6 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
   },
   scrollContainer: {
     flexGrow: 1,
@@ -131,12 +152,10 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: Colors.light.text,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: Colors.light.tabIconDefault,
     textAlign: "center",
   },
   formContainer: {
@@ -153,21 +172,17 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   credentialsInfo: {
-    backgroundColor: "#f8f9fa",
     padding: 16,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: "#e9ecef",
   },
   credentialsTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.light.text,
     marginBottom: 8,
   },
   credentialsText: {
     fontSize: 12,
-    color: Colors.light.tabIconDefault,
     fontFamily: "monospace",
   },
 });

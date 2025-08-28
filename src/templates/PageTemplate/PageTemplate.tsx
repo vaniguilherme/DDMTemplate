@@ -1,7 +1,14 @@
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import React from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
+import { ThemedText } from "@/components/ThemedText";
+import { ThemedView } from "@/components/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { useColorScheme } from "@/hooks/useColorScheme";
+import React from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 
 export interface PageTemplateProps {
   title: string;
@@ -18,30 +25,40 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({
   scrollable = false,
   keyboardAvoiding = false,
 }) => {
+  const colorScheme = useColorScheme() ?? "light";
+  const colors = Colors[colorScheme];
+
   const content = (
     <ThemedView style={styles.container}>
       <ThemedView style={styles.header}>
         <ThemedText type="title">{title}</ThemedText>
         {subtitle && (
-          <ThemedText style={styles.subtitle}>{subtitle}</ThemedText>
+          <ThemedText
+            style={[styles.subtitle, { color: colors.textSecondary }]}
+            lightColor={colors.textSecondary}
+            darkColor={colors.textSecondary}
+          >
+            {subtitle}
+          </ThemedText>
         )}
       </ThemedView>
-      
-      <ThemedView style={styles.content}>
-        {children}
-      </ThemedView>
+
+      <ThemedView style={styles.content}>{children}</ThemedView>
     </ThemedView>
   );
 
   if (keyboardAvoiding) {
     return (
-      <KeyboardAvoidingView 
-        style={styles.keyboardContainer} 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      <KeyboardAvoidingView
+        style={[
+          styles.keyboardContainer,
+          { backgroundColor: colors.background },
+        ]}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         {scrollable ? (
-          <ScrollView 
-            style={styles.scrollView} 
+          <ScrollView
+            style={[styles.scrollView, { backgroundColor: colors.background }]}
             contentContainerStyle={styles.scrollContent}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
@@ -56,8 +73,8 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({
   }
 
   return scrollable ? (
-    <ScrollView 
-      style={styles.scrollView} 
+    <ScrollView
+      style={[styles.scrollView, { backgroundColor: colors.background }]}
       showsVerticalScrollIndicator={false}
     >
       {content}
@@ -70,15 +87,12 @@ export const PageTemplate: React.FC<PageTemplateProps> = ({
 const styles = StyleSheet.create({
   keyboardContainer: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   scrollView: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
     paddingTop: 60,
   },
   header: {
@@ -87,7 +101,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
     marginTop: 4,
   },
   content: {
