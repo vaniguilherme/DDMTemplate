@@ -24,7 +24,7 @@ export function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos");
+      Alert.alert("Erro", "Por favor, preencha os campos");
       return;
     }
 
