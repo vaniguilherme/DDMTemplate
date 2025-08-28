@@ -1,9 +1,9 @@
-import { CreateTaskData, Task, UpdateTaskData } from '@/src/types';
-import { addSampleData } from '@/src/utils';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { CreateTaskData, Task, UpdateTaskData } from "@/src/types";
+import { addSampleData } from "@/src/utils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from "react";
 
-const STORAGE_KEY = 'tasks';
+const STORAGE_KEY = "tasks";
 
 export const useTasks = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -14,17 +14,17 @@ export const useTasks = () => {
   const loadTasks = async () => {
     try {
       setIsLoading(true);
-      
+
       // Adicionar dados de exemplo se for a primeira vez
       await addSampleData();
-      
+
       const storedTasks = await AsyncStorage.getItem(STORAGE_KEY);
       if (storedTasks) {
         const parsedTasks = JSON.parse(storedTasks);
         setTasks(parsedTasks);
       }
     } catch (error) {
-      console.error('Erro ao carregar tarefas:', error);
+      console.error("Erro ao carregar tarefas:", error);
     } finally {
       setIsLoading(false);
     }
@@ -35,7 +35,7 @@ export const useTasks = () => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(tasksToSave));
     } catch (error) {
-      console.error('Erro ao salvar tarefas:', error);
+      console.error("Erro ao salvar tarefas:", error);
     }
   };
 
@@ -61,24 +61,28 @@ export const useTasks = () => {
       completed: false,
       createdAt: new Date().toISOString(),
       priority: taskData.priority,
+      reminderTime: taskData.reminderTime,
     };
 
-    setTasks(prevTasks => {
+    setTasks((prevTasks) => {
       const newTasks = [newTask, ...prevTasks];
-      
+
       // Salvar imediatamente no AsyncStorage
       saveTasks(newTasks);
-      
+
       return newTasks;
     });
-    
+
     return newTask;
   };
 
   // Atualizar tarefa existente
-  const updateTask = async (taskId: string, updates: UpdateTaskData): Promise<void> => {
-    setTasks(prevTasks =>
-      prevTasks.map(task =>
+  const updateTask = async (
+    taskId: string,
+    updates: UpdateTaskData
+  ): Promise<void> => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
         task.id === taskId ? { ...task, ...updates } : task
       )
     );
@@ -86,8 +90,8 @@ export const useTasks = () => {
 
   // Alternar status de conclusão
   const toggleTaskCompletion = async (taskId: string): Promise<void> => {
-    setTasks(prevTasks =>
-      prevTasks.map(task =>
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
         task.id === taskId ? { ...task, completed: !task.completed } : task
       )
     );
@@ -95,12 +99,12 @@ export const useTasks = () => {
 
   // Deletar tarefa
   const deleteTask = async (taskId: string): Promise<void> => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
 
   // Buscar tarefa por ID
   const getTaskById = (taskId: string): Task | undefined => {
-    return tasks.find(task => task.id === taskId);
+    return tasks.find((task) => task.id === taskId);
   };
 
   // Função de refresh
@@ -113,9 +117,9 @@ export const useTasks = () => {
   // Estatísticas das tarefas
   const getTaskStats = () => {
     const total = tasks.length;
-    const completed = tasks.filter(task => task.completed).length;
+    const completed = tasks.filter((task) => task.completed).length;
     const pending = total - completed;
-    
+
     return {
       total,
       completed,

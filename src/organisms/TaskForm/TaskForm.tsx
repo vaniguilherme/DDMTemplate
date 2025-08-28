@@ -1,9 +1,10 @@
-import { ThemedView } from '@/components/ThemedView';
-import { Button, Input } from '@/src/atoms';
-import { PrioritySelector } from '@/src/molecules';
-import { CreateTaskData, TaskPriority } from '@/src/types';
-import React, { useState } from 'react';
-import { Alert, StyleSheet } from 'react-native';
+import { ThemedView } from "@/components/ThemedView";
+import { Button, Input } from "@/src/atoms";
+import { useNotifications } from "@/src/hooks";
+import { PrioritySelector, ReminderSelector } from "@/src/molecules";
+import { CreateTaskData, ReminderTime, TaskPriority } from "@/src/types";
+import React, { useState } from "react";
+import { Alert, StyleSheet } from "react-native";
 
 export interface TaskFormProps {
   onSubmit: (taskData: CreateTaskData) => Promise<void>;
@@ -16,19 +17,22 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   onSuccess,
   isLoading = false,
 }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [priority, setPriority] = useState<TaskPriority>('média');
-  const [titleError, setTitleError] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState<TaskPriority>("média");
+  const [reminderTime, setReminderTime] = useState<ReminderTime | undefined>();
+  const [titleError, setTitleError] = useState("");
+
+  const { scheduleTaskReminder } = useNotifications();
 
   const validateForm = (): boolean => {
-    setTitleError('');
-    
+    setTitleError("");
+
     if (!title.trim()) {
-      setTitleError('O título da tarefa é obrigatório!');
+      setTitleError("O título da tarefa é obrigatório!");
       return false;
     }
-    
+
     return true;
   };
 
@@ -38,29 +42,39 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     }
 
     try {
-      await onSubmit({
+      const taskData: CreateTaskData = {
         title: title.trim(),
         description: description.trim(),
         priority,
-      });
+        reminderTime,
+      };
+
+      await onSubmit(taskData);
+
+      // Agendar notificação se um lembrete foi selecionado
+      if (reminderTime) {
+        await scheduleTaskReminder(title.trim(), reminderTime);
+      }
 
       // Limpar formulário após sucesso
-      setTitle('');
-      setDescription('');
-      setPriority('média');
-      
+      setTitle("");
+      setDescription("");
+      setPriority("média");
+      setReminderTime(undefined);
+
       onSuccess?.();
     } catch (error) {
-      console.error('Erro ao criar tarefa:', error);
-      Alert.alert('Erro', 'Não foi possível criar a tarefa. Tente novamente.');
+      console.error("Erro ao criar tarefa:", error);
+      Alert.alert("Erro", "Não foi possível criar a tarefa. Tente novamente.");
     }
   };
 
   const handleClear = () => {
-    setTitle('');
-    setDescription('');
-    setPriority('média');
-    setTitleError('');
+    setTitle("");
+    setDescription("");
+    setPriority("média");
+    setReminderTime(undefined);
+    setTitleError("");
   };
 
   return (
@@ -90,6 +104,11 @@ export const TaskForm: React.FC<TaskFormProps> = ({
         onPriorityChange={setPriority}
       />
 
+      <ReminderSelector
+        selectedReminder={reminderTime}
+        onReminderChange={setReminderTime}
+      />
+
       <ThemedView style={styles.actions}>
         <Button
           title="Limpar"
@@ -97,9 +116,9 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           onPress={handleClear}
           style={styles.clearButton}
         />
-        
+
         <Button
-          title={isLoading ? 'Criando...' : 'Criar Tarefa'}
+          title={isLoading ? "Criando..." : "Criar Tarefa"}
           variant="primary"
           onPress={handleSubmit}
           disabled={isLoading}
@@ -116,7 +135,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100, // Espaço extra para evitar sobreposição com tabs
   },
   actions: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
     marginTop: 24,
     marginBottom: 20, // Margem extra
