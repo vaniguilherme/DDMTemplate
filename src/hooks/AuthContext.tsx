@@ -45,15 +45,15 @@ export function AuthProvider({
         setIsAuthenticated(true);
       }
     } catch (error) {
-      console.error("Erro ao verificar status de autenticação:", error);
+      console.error("Erro na verificação do status de autenticação:", error);
     } finally {
       setIsLoading(false);
     }
-  };
+  }; 
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      // Verificar credenciais fixas
+    
       if (
         email === FIXED_CREDENTIALS.email &&
         password === FIXED_CREDENTIALS.password
@@ -63,7 +63,7 @@ export function AuthProvider({
           name: FIXED_CREDENTIALS.name,
         };
 
-        // Salvar no AsyncStorage
+        
         await AsyncStorage.setItem(
           AUTH_STORAGE_KEY,
           JSON.stringify({
@@ -79,7 +79,7 @@ export function AuthProvider({
         return false;
       }
     } catch (error) {
-      console.error("Erro durante o login:", error);
+      console.error("Erro no login:", error);
       return false;
     }
   };
@@ -90,7 +90,7 @@ export function AuthProvider({
       setUser(null);
       setIsAuthenticated(false);
     } catch (error) {
-      console.error("Erro durante o logout:", error);
+      console.error("Erro no logout:", error);
     }
   };
 
