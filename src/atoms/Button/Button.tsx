@@ -1,18 +1,22 @@
-import React from 'react';
-import { StyleSheet, TouchableOpacity, TouchableOpacityProps } from 'react-native';
-import { ThemedText } from '@/components/ThemedText';
+import { ThemedText } from "@/components/ThemedText";
+import React from "react";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  TouchableOpacityProps,
+} from "react-native";
 
 export interface ButtonProps extends TouchableOpacityProps {
   title: string;
-  variant?: 'primary' | 'secondary' | 'danger';
-  size?: 'small' | 'medium' | 'large';
+  variant?: "primary" | "secondary" | "danger" | "outline";
+  size?: "small" | "medium" | "large";
   fullWidth?: boolean;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   title,
-  variant = 'primary',
-  size = 'medium',
+  variant = "primary",
+  size = "medium",
   fullWidth = false,
   style,
   disabled,
@@ -41,20 +45,25 @@ export const Button: React.FC<ButtonProps> = ({
 const styles = StyleSheet.create({
   button: {
     borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   // Variants
   primary: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: "#4CAF50",
   },
   secondary: {
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
     borderWidth: 2,
-    borderColor: '#e0e0e0',
+    borderColor: "#e0e0e0",
   },
   danger: {
-    backgroundColor: '#FF6B6B',
+    backgroundColor: "#FF6B6B",
+  },
+  outline: {
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#4CAF50",
   },
   // Sizes
   small: {
@@ -71,24 +80,27 @@ const styles = StyleSheet.create({
   },
   // States
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
   disabled: {
-    backgroundColor: '#ccc',
+    backgroundColor: "#ccc",
     opacity: 0.6,
   },
   // Text styles
   text: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   primaryText: {
-    color: '#ffffff',
+    color: "#ffffff",
   },
   secondaryText: {
-    color: '#666',
+    color: "#666",
   },
   dangerText: {
-    color: '#ffffff',
+    color: "#ffffff",
+  },
+  outlineText: {
+    color: "#4CAF50",
   },
 });
