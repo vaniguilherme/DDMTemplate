@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,8 @@ import {
   ScrollView,
   Linking,
   Alert,
+  TouchableOpacity,
+  Vibration,
 } from 'react-native';
 import { PageTemplate } from '@/src/templates';
 import { Button } from '@/src/atoms';
@@ -14,6 +16,8 @@ import { useAuth } from '@/src/hooks';
 
 export function AboutScreen() {
   const { user } = useAuth();
+  const [tapCount, setTapCount] = useState(0);
+  const [easterEggActivated, setEasterEggActivated] = useState(false);
 
   const handleOpenLink = async (url: string) => {
     try {
@@ -24,6 +28,56 @@ export function AboutScreen() {
     }
   };
 
+  const handleIconTap = () => {
+    const newTapCount = tapCount + 1;
+    setTapCount(newTapCount);
+
+    // Vibração curta para feedback tátil
+    Vibration.vibrate(50);
+
+    if (newTapCount === 10 && !easterEggActivated) {
+      setEasterEggActivated(true);
+      // Reset do contador
+      setTapCount(0);
+      
+      // Alert divertido
+      Alert.alert(
+        '🎉 Easter Egg Descoberto! 🎉',
+        'Parabéns! Você encontrou o segredo escondido! Preparado para uma surpresa?',
+        [
+          {
+            text: 'Cancelar',
+            style: 'cancel',
+            onPress: () => setEasterEggActivated(false)
+          },
+          {
+            text: '🎬 Ver Vídeo',
+            onPress: () => {
+              // Link para um vídeo engraçado do YouTube
+              handleOpenLink('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+              setEasterEggActivated(false);
+            }
+          }
+        ]
+      );
+    } else if (newTapCount >= 5 && newTapCount < 10) {
+      // Feedback visual quando está chegando perto
+      const remaining = 10 - newTapCount;
+      Alert.alert(
+        '🤔 Hmm...',
+        `Algo interessante pode acontecer... ${remaining} toques restantes!`,
+        [{ text: 'OK', style: 'default' }]
+      );
+    }
+
+    // Reset automático após 5 segundos de inatividade
+    setTimeout(() => {
+      if (newTapCount < 10) {
+        setTapCount(0);
+      }
+    }, 5000);
+  };
+
   return (
     <PageTemplate
       title="Sobre"
@@ -32,7 +86,14 @@ export function AboutScreen() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         {/* App Info */}
         <View style={styles.section}>
-          <Text style={styles.appIcon}>📋</Text>
+          <TouchableOpacity onPress={handleIconTap} style={styles.iconContainer}>
+            <Text style={[styles.appIcon, tapCount > 0 && tapCount < 10 && styles.appIconAnimated]}>
+              📋
+            </Text>
+            {tapCount > 0 && tapCount < 10 && (
+              <Text style={styles.tapCounter}>{tapCount}/10</Text>
+            )}
+          </TouchableOpacity>
           <Text style={styles.appName}>DDM Template</Text>
           <Text style={styles.appVersion}>Versão 1.0.0</Text>
           <Text style={styles.appDescription}>
@@ -151,6 +212,28 @@ const styles = StyleSheet.create({
     fontSize: 64,
     textAlign: 'center',
     marginBottom: 12,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+  },
+  appIconAnimated: {
+    transform: [{ scale: 1.1 }],
+    opacity: 0.8,
+  },
+  tapCounter: {
+    position: 'absolute',
+    bottom: 0,
+    right: '40%',
+    backgroundColor: Colors.light.tint,
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 12,
+    overflow: 'hidden',
   },
   appName: {
     fontSize: 24,
